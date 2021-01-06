@@ -1,60 +1,42 @@
-// grab API for ticketmaster
-// check to see if api link opens DOM in console
-// grab desired characteristics of DOM
-// set individual characteristics to variables
-// create a grid item to display desired variables
-// create function that grabs variables and displays them into the grid
-
-// create button for food category
-// add event listener to button - when clicked, write function to hide events div and display food div
-
-// enter botton commands the search input
-
-// run through loop and display in cards
-
-// look at cat button and see how to display it on the page
-
-// if API city works by id # ... you could create variables for city = id. When user types in a city name,
-// stringify that input, and create input"" = i , then "cityInput" = id
-
-//446b2bc6bc0b15dcb3cff0f75
-
-// yelp:
-//Client ID
-//v1vUoXCtGnWqNSH-eUsZRw
-//API Key
-//IHFpaB50zoKp8onGqYexW9-1kn-QcTfuGxbe7bgj6TT7OZZf30kAB8Ka6Ru5HEcWm5W6tK6kMr2AVQYiWg_cElZ_gTWWBuGsC5lNmhyJqVzGXoyCIrNaRHpHI2LrX3Yx
-
 $(document).ready(function () {
 
-    M.AutoInit();
+    $(".searchButton").on("click", function grabItems(event, cityInput) {
 
-    $(".searchButton").on("click", function displayItems() {
+        event.preventDefault();
 
+        // pass the user's searched city into the searching function
+        var cityInput = $('#cityInput').val().toUpperCase().trim()
 
-        $.ajax({
-            method: "GET",
-            url: 'https://api.openbrewerydb.org/breweries?by_city=saint%20louis'
-        })
+        if (cityInput != "") {
 
-            .then(function (response) {
-                
+            var queryUrl = "https://api.openbrewerydb.org/breweries?by_city=" + cityInput;
+            console.log(queryUrl);
 
-                for (i = 0; i < 8; i++) {
-
-                    var itemContainer = $("#item" + i)
-                    var itemTitle = response[i].name
-                    var itemURL = response[i].website_url
-                    var pTwo = $("<a>").attr("href", itemURL)
-                    var pThree = $("<p>").text(itemTitle);
-
-                    itemContainer.append(pTwo);
-                    pTwo.append(pThree);
-                    pThree.attr("id", "responsiveLink");
-
-                }
-
+            $.ajax({
+                url: queryUrl,
+                method: "GET"
             })
+
+                .then(function (response) {
+
+                    // run through loop and display in container
+                    for (i = 0; i < 8; i++) {
+
+                        var itemContainer = $("#item" + i)
+                        var itemTitle = response[i].name
+                        var itemURL = response[i].website_url
+                        var pTwo = $("<a>").attr("href", itemURL)
+                        var pThree = $("<p>").text(itemTitle);
+
+                        itemContainer.append(pTwo);
+                        pTwo.append(pThree);
+                        pThree.attr("id", "responsiveLink");
+
+                    }
+
+                })
+
+        }
 
     })
 
@@ -65,8 +47,7 @@ $(document).ready(function () {
         }
     })
 
-
-
+    // toggles between empty heart / full heart on click
     $(".favoriteButton").on("click", function () {
 
         var iconDiv = $(this).find('i');
@@ -81,21 +62,14 @@ $(document).ready(function () {
 
     })
 
-
-
+    // full hearts get added to local storage for future reference in "MY FAVORITES"
     $(".favoriteButton").on("click", function () {
 
         var favoritedId = $(this).closest('div').attr('id')
-        
-
         var itemURL = $(this).siblings('a').attr('href')
-        
-
         var itemTitle = $(this).siblings('a').children('p').html()
-     
 
         var favoritedInfo = { favoritedId, itemURL, itemTitle }
-
         var favsList = JSON.parse(localStorage.getItem("favoritesList"))
 
         if (favsList == null) {
@@ -121,16 +95,7 @@ $(document).ready(function () {
             favsList.splice(favsList.indexOf(i), i);
             localStorage.setItem('favoritesList', JSON.stringify(favsList));
         }
+
     })
-                
-
-
-           
-
-       
-            
-
-
-
 
 })
